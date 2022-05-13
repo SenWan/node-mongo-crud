@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
+const objectId = require('mongodb').objectId;
 const port = process.env.PORT || 5000;
 
 // use middleware
@@ -20,13 +21,19 @@ async function run(){
         await client.connect();
         const usersCollection = client.db('foodExpress').collection('user');
         
-        // get user
+        // get users
         app.get('/user', async (req, res) => {
             const query = {};
             const cursor = usersCollection.find(query);
             const users = await cursor.toArray();
             res.send(users)
     });
+
+    // delete a user
+    app.delete('/user/:id' async(req, res) => {
+        const id = req.params.id;
+        const query = {_id: objectId(id)};
+    })
 
         // post user : add a new user
         app.post('/user', async (req, res) => {
